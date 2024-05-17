@@ -44,7 +44,7 @@ SENSORS: dict[str, SensorEntityDescription] = {
         name="Forecast Today",
         icon="mdi:solar-power",
         suggested_display_precision=2,
-        #state_class= SensorStateClass.MEASUREMENT,
+        # state_class= SensorStateClass.MEASUREMENT,
     ),
     "peak_w_today": SensorEntityDescription(
         key="peak_w_today",
@@ -54,7 +54,7 @@ SENSORS: dict[str, SensorEntityDescription] = {
         name="Peak Forecast Today",
         icon="mdi:solar-power",
         suggested_display_precision=0,
-        state_class= SensorStateClass.MEASUREMENT,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "peak_w_time_today": SensorEntityDescription(
         key="peak_w_time_today",
@@ -62,7 +62,7 @@ SENSORS: dict[str, SensorEntityDescription] = {
         name="Peak Time Today",
         icon="mdi:clock",
         device_class=SensorDeviceClass.TIMESTAMP,
-        #suggested_display_precision=0,
+        # suggested_display_precision=0,
     ),
     "forecast_this_hour": SensorEntityDescription(
         key="forecast_this_hour",
@@ -200,14 +200,14 @@ SENSORS: dict[str, SensorEntityDescription] = {
         translation_key="power_now",
         name="Power Now",
         suggested_display_precision=0,
-        state_class= SensorStateClass.MEASUREMENT,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "power_now_30m": SensorEntityDescription(
         key="power_now_30m",
         translation_key="power_now_30m",
         device_class=SensorDeviceClass.POWER,
         native_unit_of_measurement=UnitOfPower.WATT,
-        #name="Power Next 30 Mins",
+        # name="Power Next 30 Mins",
         suggested_display_precision=0,
     ),
     "power_now_1hr": SensorEntityDescription(
@@ -215,14 +215,14 @@ SENSORS: dict[str, SensorEntityDescription] = {
         translation_key="power_now_1hr",
         device_class=SensorDeviceClass.POWER,
         native_unit_of_measurement=UnitOfPower.WATT,
-        #name="Power Next Hour",
+        # name="Power Next Hour",
         suggested_display_precision=0,
     ),
-    #"weather_description": SensorEntityDescription(
-        #key="weather_description",
-        #translation_key="weather_description",
-        #icon="mdi:weather-partly-snowy-rainy",
-    #),
+    # "weather_description": SensorEntityDescription(
+    # key="weather_description",
+    # translation_key="weather_description",
+    # icon="mdi:weather-partly-snowy-rainy",
+    # ),
 }
 
 
@@ -242,25 +242,26 @@ async def async_setup_entry(
 
     for site in coordinator.solcast._sites:
         k = RooftopSensorEntityDescription(
-                key=site["resource_id"],
-                name=site["name"],
-                icon="mdi:home",
-                device_class=SensorDeviceClass.ENERGY,
-                native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
-                suggested_display_precision=2,
-                rooftop_id=site["resource_id"],
-            )
-        
+            key=site["resource_id"],
+            name=site["name"],
+            icon="mdi:home",
+            device_class=SensorDeviceClass.ENERGY,
+            native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
+            suggested_display_precision=2,
+            rooftop_id=site["resource_id"],
+        )
+
         sen = RooftopSensor(
             key="site_data",
             coordinator=coordinator,
             entity_description=k,
             entry=entry,
         )
-        
+
         entities.append(sen)
-    
+
     async_add_entities(entities)
+
 
 class SolcastSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Solcast Sensor device."""
@@ -277,9 +278,11 @@ class SolcastSensor(CoordinatorEntity, SensorEntity):
         """Initialize the sensor."""
         super().__init__(coordinator)
 
-        #doesnt work :()
+        # doesnt work :()
         if entity_description.key == "forecast_custom_hour":
-            self._attr_translation_placeholders = {"forecast_custom_hour": f"{coordinator.solcast._customhoursensor}"}
+            self._attr_translation_placeholders = {
+                "forecast_custom_hour": f"{coordinator.solcast._customhoursensor}"
+            }
 
         self.entity_description = entity_description
         self.coordinator = coordinator
@@ -295,17 +298,16 @@ class SolcastSensor(CoordinatorEntity, SensorEntity):
                 f"SOLCAST - unable to get sensor value {ex} %s", traceback.format_exc()
             )
             self._sensor_data = None
-        
+
         self._attr_device_info = {
             ATTR_IDENTIFIERS: {(DOMAIN, entry.entry_id)},
-            ATTR_NAME: "Solcast PV Forecast", #entry.title,
+            ATTR_NAME: "Solcast PV Forecast",  # entry.title,
             ATTR_MANUFACTURER: "Oziee",
             ATTR_MODEL: "Solcast PV Forecast",
             ATTR_ENTRY_TYPE: DeviceEntryType.SERVICE,
             ATTR_SW_VERSION: coordinator._version,
             ATTR_CONFIGURATION_URL: "https://toolkit.solcast.com.au/",
         }
-
 
     @property
     def extra_state_attributes(self):
@@ -344,10 +346,12 @@ class SolcastSensor(CoordinatorEntity, SensorEntity):
             self._sensor_data = None
         self.async_write_ha_state()
 
+
 @dataclass
 class RooftopSensorEntityDescription(SensorEntityDescription):
     rooftop_id: str | None = None
-    
+
+
 class RooftopSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Solcast Sensor device."""
 
@@ -380,10 +384,10 @@ class RooftopSensor(CoordinatorEntity, SensorEntity):
                 f"SOLCAST - unable to get sensor value {ex} %s", traceback.format_exc()
             )
             self._sensor_data = None
-        
+
         self._attr_device_info = {
             ATTR_IDENTIFIERS: {(DOMAIN, entry.entry_id)},
-            ATTR_NAME: "Solcast PV Forecast", #entry.title,
+            ATTR_NAME: "Solcast PV Forecast",  # entry.title,
             ATTR_MANUFACTURER: "Oziee",
             ATTR_MODEL: "Solcast PV Forecast",
             ATTR_ENTRY_TYPE: DeviceEntryType.SERVICE,
@@ -413,7 +417,7 @@ class RooftopSensor(CoordinatorEntity, SensorEntity):
         """Return the state extra attributes of the sensor."""
         try:
             return self.coordinator.get_site_sensor_extra_attributes(
-                self.rooftop_id, 
+                self.rooftop_id,
                 self.key,
             )
         except Exception as ex:
@@ -444,7 +448,7 @@ class RooftopSensor(CoordinatorEntity, SensorEntity):
         """Handle updated data from the coordinator."""
         try:
             self._sensor_data = self.coordinator.get_site_sensor_value(
-                self.rooftop_id, 
+                self.rooftop_id,
                 self.key,
             )
         except Exception as ex:
