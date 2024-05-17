@@ -1,7 +1,7 @@
 
 # HA Solcast PV Solar Forecast Integration
 
-Home Assistant(https://www.home-assistant.io) Integration Component
+Home Assistant (https://www.home-assistant.io) Integration Component
 
 This custom component integrates the Solcast Hobby PV Forecast API into Home Assistant.
 [<img src="https://user-images.githubusercontent.com/1471841/135556872-ff5b51ac-699e-4ea5-869c-f9b0d0c5b815.png" width="200">](https://user-images.githubusercontent.com/1471841/135556872-ff5b51ac-699e-4ea5-869c-f9b0d0c5b815.png)
